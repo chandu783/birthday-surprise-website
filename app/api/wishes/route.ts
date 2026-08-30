@@ -39,8 +39,18 @@ export async function POST(request: Request) {
     });
 
     if (!emailResponse.ok) {
-      return NextResponse.json({ error: "We could not send the wishes right now." }, { status: 502 });
-    }
+  const errorText = await emailResponse.text();
+
+  console.error("Resend API error:", emailResponse.status, errorText);
+
+  return NextResponse.json(
+    {
+      error: "We could not send the wishes right now.",
+      details: errorText,
+    },
+    { status: 502 }
+  );
+}
 
     return NextResponse.json({ ok: true });
   } catch {
