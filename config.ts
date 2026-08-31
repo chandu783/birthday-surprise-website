@@ -40,9 +40,14 @@ export const config = {
       "/memories/memory-02.png",
       "/memories/memory-03.png",
       "/memories/memory-04.png",
+      "/memories/memory-04.png",
+      "/memories/memory-04.png",
     ],
     // Add licensed videos to /public/memories/ when available.
-    videos: [],
+    videos: [
+      "/memories/video-01.mp4",
+       "/memories/video-02.mp4",
+    ],
     enableSwipe: true, // Manual swipe only, no auto-scroll
     manualNavigationOnly: true,
   },
