@@ -1,303 +1,664 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { config } from "@/config";
-
-interface GalleryItem {
-  type: "photo" | "video";
-  src: string;
-}
+import { fadeInUp } from "@/lib/animations";
 
 interface GalleryStepProps {
   onComplete: () => void;
 }
 
+type GalleryItem =
+  | {
+      type: "photo";
+      src: string;
+      index: number;
+    }
+  | {
+      type: "video";
+      src: string;
+      index: number;
+    };
+
+const captions = [
+  "Beautiful You ♡",
+  "My Favorite Girl ♡",
+  "So Precious ♡",
+  "A Beautiful Memory ♡",
+  "You Make Me Smile ♡",
+  "My Happiness ♡",
+  "Simply Beautiful ♡",
+  "Forever Special ♡",
+  "The Birthday Girl ♡",
+  "My Heart ♡",
+];
+
+const sparklePositions = [
+  { left: "5%", top: "12%", size: 5, delay: 0 },
+  { left: "12%", top: "34%", size: 3, delay: 0.7 },
+  { left: "20%", top: "8%", size: 4, delay: 1.2 },
+  { left: "29%", top: "22%", size: 3, delay: 0.4 },
+  { left: "39%", top: "9%", size: 5, delay: 1.7 },
+  { left: "49%", top: "18%", size: 3, delay: 0.9 },
+  { left: "61%", top: "7%", size: 4, delay: 1.5 },
+  { left: "72%", top: "26%", size: 5, delay: 0.2 },
+  { left: "82%", top: "12%", size: 3, delay: 1.1 },
+  { left: "92%", top: "32%", size: 5, delay: 0.5 },
+  { left: "8%", top: "67%", size: 4, delay: 1.8 },
+  { left: "18%", top: "83%", size: 3, delay: 0.3 },
+  { left: "31%", top: "72%", size: 5, delay: 1.4 },
+  { left: "46%", top: "88%", size: 3, delay: 0.8 },
+  { left: "57%", top: "76%", size: 4, delay: 1.9 },
+  { left: "69%", top: "91%", size: 3, delay: 0.6 },
+  { left: "81%", top: "70%", size: 5, delay: 1.3 },
+  { left: "94%", top: "84%", size: 4, delay: 0.1 },
+];
+
+const hearts = [
+  { left: "7%", top: "22%", delay: 0 },
+  { left: "91%", top: "19%", delay: 1.2 },
+  { left: "4%", top: "76%", delay: 2 },
+  { left: "95%", top: "67%", delay: 0.8 },
+  { left: "24%", top: "92%", delay: 1.7 },
+  { left: "76%", top: "8%", delay: 0.5 },
+];
+
 export default function GalleryStep({ onComplete }: GalleryStepProps) {
-  const items: GalleryItem[] = [
-    ...config.gallery.photos.map((src) => ({ type: "photo" as const, src })),
-    ...config.gallery.videos.map((src) => ({ type: "video" as const, src })),
-  ];
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isAutoplay, setIsAutoplay] = useState(false);
-  const autoplayRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const featuredVideoRef = useRef<HTMLVideoElement | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [videoSound, setVideoSound] = useState(true);
 
+  /*
+   * Combine photos + videos into ONE gallery.
+   */
+  const galleryItems = useMemo<GalleryItem[]>(() => {
+    const photos = Array.isArray(config.gallery.photos)
+      ? config.gallery.photos
+      : [];
+
+    const videos = Array.isArray(config.gallery.videos)
+      ? config.gallery.videos
+      : [];
+
+    return [
+      ...photos.map((src: string, index: number) => ({
+        type: "photo" as const,
+        src,
+        index,
+      })),
+      ...videos.map((src: string, index: number) => ({
+        type: "video" as const,
+        src,
+        index,
+      })),
+    ];
+  }, []);
+
+  const currentItem = galleryItems[currentIndex];
+
+  /*
+   * Move to next memory.
+   */
+  const nextMemory = () => {
+    if (galleryItems.length === 0) return;
+
+    setCurrentIndex((prev) =>
+      prev === galleryItems.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  /*
+   * Move to previous memory.
+   */
+  const previousMemory = () => {
+    if (galleryItems.length === 0) return;
+
+    setCurrentIndex((prev) =>
+      prev === 0 ? galleryItems.length - 1 : prev - 1
+    );
+  };
+
+  /*
+   * Keyboard navigation.
+   */
   useEffect(() => {
-    if (!isAutoplay || items.length === 0) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowRight") {
+        nextMemory();
+      }
 
-    autoplayRef.current = setInterval(() => {
-      setCurrentSlideIndex((current) => (current + 1) % items.length);
-    }, 5000);
+      if (event.key === "ArrowLeft") {
+        previousMemory();
+      }
+
+      if (event.key === "Escape") {
+        setFullscreen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      if (autoplayRef.current) clearInterval(autoplayRef.current);
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isAutoplay, items.length]);
+  }, [galleryItems.length]);
 
-  if (items.length === 0) {
+  /*
+   * Fullscreen selected media.
+   */
+  const openFullscreen = () => {
+    setFullscreen(true);
+  };
+
+  if (galleryItems.length === 0) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 px-4 py-8"
+      <motion.main
+        {...fadeInUp}
+        className="min-h-screen flex items-center justify-center bg-[#fdf7f4] px-6"
       >
         <div className="text-center">
-          <p className="mb-6 text-lg text-gray-300">Add photos and videos to /public/memories/</p>
+          <h1 className="font-romantic text-5xl text-[#b86b78]">
+            Her Beautiful Moments
+          </h1>
+
+          <p className="mt-4 text-[#725b61]">
+            Add some beautiful memories to your gallery.
+          </p>
+
           <button
-            type="button"
             onClick={onComplete}
-            className="rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-8 py-4 font-bold text-white shadow-lg shadow-pink-500/30 transition hover:scale-105"
+            className="mt-8 rounded-full bg-[#d97988] px-8 py-3 font-semibold text-white shadow-lg"
           >
             Continue →
           </button>
         </div>
-      </motion.div>
+      </motion.main>
     );
   }
 
-  const currentItem = items[currentSlideIndex];
-  const goToPrevious = () => {
-    setCurrentSlideIndex((current) => (current - 1 + items.length) % items.length);
-    setIsAutoplay(false);
-  };
-  const goToNext = () => {
-    setCurrentSlideIndex((current) => (current + 1) % items.length);
-    setIsAutoplay(false);
-  };
-  const enableVideoAudio = (video: HTMLVideoElement) => {
-    video.muted = false;
-    video.defaultMuted = false;
-    video.volume = 1;
-  };
-  const enableFeaturedVideoSound = () => {
-    const video = featuredVideoRef.current;
-    if (!video) return;
-
-    enableVideoAudio(video);
-    void video.play().catch(() => {
-      // The visible video controls remain available if the browser blocks playback.
-    });
-  };
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950/95 via-purple-950/90 to-slate-900/95 px-4 py-10 sm:py-14"
+    <motion.main
+      {...fadeInUp}
+      className="relative min-h-screen overflow-hidden bg-[#fbf5f1] px-4 py-7 text-[#4a3438] sm:px-6 lg:px-10"
     >
-      <div className="pointer-events-none absolute left-1/2 top-0 h-80 w-80 -translate-x-1/2 rounded-full bg-pink-500/20 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 right-0 h-72 w-72 rounded-full bg-purple-500/20 blur-3xl" />
+      {/* =========================================================
+          SIMPLE BACKGROUND
+      ========================================================= */}
 
-      <div className="relative z-10 mx-auto w-full max-w-6xl">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        {/* Soft pink light */}
+        <motion.div
+          className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-pink-200/30 blur-3xl"
+          animate={{
+            x: [0, 40, 0],
+            y: [0, 25, 0],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* Soft cream light */}
+        <motion.div
+          className="absolute -right-24 bottom-10 h-80 w-80 rounded-full bg-amber-100/50 blur-3xl"
+          animate={{
+            x: [0, -35, 0],
+            y: [0, -20, 0],
+          }}
+          transition={{
+            duration: 14,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* =====================================================
+            SPARKLES
+        ===================================================== */}
+
+        {sparklePositions.map((sparkle, index) => (
+          <motion.span
+            key={`sparkle-${index}`}
+            className="absolute rounded-full bg-white shadow-[0_0_12px_4px_rgba(244,114,182,0.35)]"
+            style={{
+              left: sparkle.left,
+              top: sparkle.top,
+              width: sparkle.size,
+              height: sparkle.size,
+            }}
+            animate={{
+              opacity: [0.15, 1, 0.2],
+              scale: [0.7, 1.5, 0.7],
+              y: [0, -10, 0],
+            }}
+            transition={{
+              duration: 3,
+              delay: sparkle.delay,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+
+        {/* =====================================================
+            FLOATING HEARTS
+        ===================================================== */}
+
+        {hearts.map((heart, index) => (
+          <motion.span
+            key={`heart-${index}`}
+            className="absolute text-pink-300/70"
+            style={{
+              left: heart.left,
+              top: heart.top,
+            }}
+            animate={{
+              y: [0, -18, 0],
+              opacity: [0.25, 0.85, 0.25],
+              scale: [0.8, 1.1, 0.8],
+              rotate: [-8, 8, -8],
+            }}
+            transition={{
+              duration: 4.5,
+              delay: heart.delay,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            ♡
+          </motion.span>
+        ))}
+      </div>
+
+      {/* =========================================================
+          CONTENT
+      ========================================================= */}
+
+      <section className="relative z-10 mx-auto w-full max-w-7xl">
+        {/* Header */}
+
         <motion.header
-          initial={{ opacity: 0, y: 18 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8 text-center sm:mb-10"
+          transition={{ duration: 0.8 }}
+          className="mb-7 text-center sm:mb-10"
         >
-          <p className="mb-3 inline-flex rounded-full border border-pink-300/30 bg-pink-400/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-pink-200">
-            Our story in moments
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.35em] text-[#b98770] sm:text-xs">
+            A Little Birthday Surprise
           </p>
-          <h1 className="font-romantic text-4xl text-white sm:text-5xl md:text-6xl">Our Beautiful Memories</h1>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-300 sm:text-base">
-            Every photo holds a little piece of our favourite story.
+
+          <h1 className="font-romantic text-5xl leading-none text-[#c96f82] sm:text-6xl md:text-7xl">
+            Her Beautiful Moments
+          </h1>
+
+          <p className="mx-auto mt-3 max-w-xl font-serif text-sm italic text-[#80696e] sm:text-base">
+            Every memory of you is my favorite.
           </p>
+
+          <div className="mx-auto mt-4 flex items-center justify-center gap-3">
+            <span className="h-px w-16 bg-[#d99a9f]/60" />
+            <span className="text-xl text-[#d97988]">♡</span>
+            <span className="h-px w-16 bg-[#d99a9f]/60" />
+          </div>
         </motion.header>
 
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.12, duration: 0.55 }}
-          className="relative rounded-[2rem] bg-gradient-to-br from-pink-300/60 via-purple-300/30 to-rose-300/60 p-px shadow-2xl shadow-pink-950/40"
-        >
-          <div className="overflow-hidden rounded-[calc(2rem-1px)] bg-slate-950/75 p-2 backdrop-blur-xl sm:p-3">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[1.65rem] bg-slate-800 sm:aspect-[16/9]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentSlideIndex}
-                  initial={{ opacity: 0, scale: 1.035 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.985 }}
-                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-0 cursor-zoom-in"
-                  onClick={() => setSelectedIndex(currentSlideIndex)}
-                >
-                  {currentItem.type === "photo" ? (
-                    <img
-                      src={currentItem.src}
-                      alt={`Memory ${currentSlideIndex + 1}`}
-                      className="h-full w-full object-cover"
-                      onError={(event) => {
-                        event.currentTarget.src = "/placeholder.jpg";
-                      }}
-                    />
-                  ) : (
-                    <video
-                      ref={featuredVideoRef}
-                      src={currentItem.src}
-                      className="h-full w-full object-cover"
-                      controls
-                      playsInline
-                      onClick={(event) => event.stopPropagation()}
-                      onLoadedMetadata={(event) => enableVideoAudio(event.currentTarget)}
-                      onPlay={(event) => enableVideoAudio(event.currentTarget)}
-                      onError={(event) => {
-                        event.currentTarget.poster = "/placeholder.jpg";
-                      }}
-                    />
-                  )}
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
-                </motion.div>
-              </AnimatePresence>
+        {/* =====================================================
+            MAIN COLLAGE
+        ===================================================== */}
 
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 text-white sm:p-7">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-pink-200">
-                    {currentItem.type === "photo" ? "Photo memory" : "Video memory"}
-                  </p>
-                  <p className="mt-1 text-lg font-semibold sm:text-2xl">A moment to keep forever</p>
+        <div className="relative mx-auto max-w-6xl">
+          {/* Left card */}
+
+          {galleryItems.length > 1 && (
+            <motion.button
+              type="button"
+              onClick={previousMemory}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.94 }}
+              className="absolute left-0 top-1/2 z-30 hidden -translate-x-2/3 -translate-y-1/2 rounded-full border border-[#e7a6ad] bg-white/90 p-4 text-2xl text-[#c96f82] shadow-lg backdrop-blur-sm md:block"
+              aria-label="Previous memory"
+            >
+              ←
+            </motion.button>
+          )}
+
+          {/* Right card */}
+
+          {galleryItems.length > 1 && (
+            <motion.button
+              type="button"
+              onClick={nextMemory}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.94 }}
+              className="absolute right-0 top-1/2 z-30 hidden translate-x-2/3 -translate-y-1/2 rounded-full border border-[#e7a6ad] bg-white/90 p-4 text-2xl text-[#c96f82] shadow-lg backdrop-blur-sm md:block"
+              aria-label="Next memory"
+            >
+              →
+            </motion.button>
+          )}
+
+          {/* Main Polaroid */}
+
+          <div className="mx-auto max-w-3xl">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`${currentItem.type}-${currentItem.src}`}
+                initial={{
+                  opacity: 0,
+                  scale: 0.94,
+                  rotate: -1,
+                }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                  rotate: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.96,
+                }}
+                transition={{
+                  duration: 0.55,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="relative mx-auto w-full max-w-2xl"
+              >
+                {/* Pink glow */}
+
+                <div className="absolute -inset-4 rounded-[2rem] bg-pink-300/20 blur-2xl" />
+
+                {/* Polaroid */}
+
+                <div className="relative rotate-[-0.5deg] rounded-sm bg-[#fffdfa] p-3 pb-7 shadow-[0_18px_50px_rgba(92,55,60,0.20)] sm:p-4 sm:pb-9">
+                  {/* Tape */}
+
+                  <div className="absolute -top-3 left-1/2 z-20 h-8 w-28 -translate-x-1/2 rotate-[-2deg] bg-pink-200/75 shadow-sm" />
+
+                  {/* Media */}
+
+                  <div className="relative aspect-[4/3] overflow-hidden bg-[#eadfd9]">
+                    {currentItem.type === "photo" ? (
+                      <motion.img
+                        key={currentItem.src}
+                        src={currentItem.src}
+                        alt="Beautiful birthday memory"
+                        className="h-full w-full object-cover"
+                        initial={{ scale: 1.04 }}
+                        animate={{ scale: 1 }}
+                        transition={{
+                          duration: 1.2,
+                          ease: "easeOut",
+                        }}
+                      />
+                    ) : (
+                      <video
+                        key={currentItem.src}
+                        src={currentItem.src}
+                        controls
+                        playsInline
+                        preload="metadata"
+                        muted={!videoSound}
+                        className="h-full w-full object-cover"
+                      />
+                    )}
+
+                    {/* Video label */}
+
+                    {currentItem.type === "video" && (
+                      <div className="pointer-events-none absolute left-3 top-3 rounded-full bg-[#d95f7a] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-lg">
+                        Video
+                      </div>
+                    )}
+
+                    {/* Fullscreen */}
+
+                    <button
+                      type="button"
+                      onClick={openFullscreen}
+                      className="absolute right-3 top-3 rounded-full bg-white/90 px-3 py-2 text-sm text-[#805c63] shadow-lg backdrop-blur-sm transition-transform hover:scale-105"
+                      aria-label="Fullscreen"
+                    >
+                      ⛶
+                    </button>
+                  </div>
+
+                  {/* Caption */}
+
+                  <div className="mt-4 text-center">
+                    <p className="font-romantic text-2xl text-[#76545b] sm:text-3xl">
+                      {captions[currentIndex % captions.length]}
+                    </p>
+
+                    <p className="mt-1 text-xs uppercase tracking-[0.25em] text-[#b99497]">
+                      Memory {currentIndex + 1} of {galleryItems.length}
+                    </p>
+                  </div>
+
+                  {/* Small heart */}
+
+                  <div className="absolute bottom-3 right-5 text-xl text-[#e28796]">
+                    ♡
+                  </div>
                 </div>
-              </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
-              <button
-                type="button"
-                aria-label="Previous memory"
-                onClick={goToPrevious}
-                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-slate-950/55 px-3 py-2 text-xl text-white backdrop-blur-md transition hover:scale-105 hover:bg-pink-500 sm:left-5"
-              >
-                ←
-              </button>
-              <button
-                type="button"
-                aria-label="Next memory"
-                onClick={goToNext}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-slate-950/55 px-3 py-2 text-xl text-white backdrop-blur-md transition hover:scale-105 hover:bg-pink-500 sm:right-5"
-              >
-                →
-              </button>
-              {currentItem.type === "video" && (
-                <button
+          {/* =====================================================
+              MOBILE NAVIGATION
+          ===================================================== */}
+
+          <div className="mt-5 flex items-center justify-center gap-4 md:hidden">
+            <button
+              type="button"
+              onClick={previousMemory}
+              className="rounded-full border border-[#e5adb2] bg-white/90 px-5 py-2 text-xl text-[#c96f82] shadow-md"
+            >
+              ←
+            </button>
+
+            <span className="text-xs font-medium text-[#98777c]">
+              {currentIndex + 1} / {galleryItems.length}
+            </span>
+
+            <button
+              type="button"
+              onClick={nextMemory}
+              className="rounded-full border border-[#e5adb2] bg-white/90 px-5 py-2 text-xl text-[#c96f82] shadow-md"
+            >
+              →
+            </button>
+          </div>
+
+          {/* =====================================================
+              COMBINED PHOTO + VIDEO THUMBNAILS
+          ===================================================== */}
+
+          <div className="mt-7 overflow-x-auto pb-3">
+            <div className="flex min-w-max justify-center gap-3 px-4">
+              {galleryItems.map((item, index) => (
+                <motion.button
+                  key={`${item.type}-${item.src}`}
                   type="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    enableFeaturedVideoSound();
+                  onClick={() => setCurrentIndex(index)}
+                  whileHover={{
+                    y: -6,
+                    rotate: index % 2 === 0 ? -2 : 2,
                   }}
-                  className="absolute right-3 top-3 z-20 rounded-full border border-white/30 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-white shadow-lg backdrop-blur-md transition hover:scale-105 hover:bg-pink-500 sm:right-5 sm:top-5"
+                  whileTap={{ scale: 0.95 }}
+                  className={`relative w-24 shrink-0 rounded-sm bg-[#fffdfa] p-2 pb-3 shadow-md transition-all sm:w-28 ${
+                    currentIndex === index
+                      ? "ring-2 ring-[#df8392] ring-offset-2 ring-offset-[#fbf5f1]"
+                      : ""
+                  }`}
                 >
-                  🔊 Enable sound
-                </button>
-              )}
-            </div>
+                  <div className="relative aspect-square overflow-hidden bg-[#eee3df]">
+                    {item.type === "photo" ? (
+                      <img
+                        src={item.src}
+                        alt={`Memory ${index + 1}`}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <>
+                        <video
+                          src={item.src}
+                          muted
+                          playsInline
+                          preload="metadata"
+                          className="h-full w-full object-cover"
+                        />
 
-            <div className="flex gap-1.5 px-2 pb-1 pt-3 sm:gap-2 sm:px-3">
-              {items.map((item, index) => (
-                <button
-                  key={`${item.src}-${index}`}
-                  type="button"
-                  aria-label={`Show memory ${index + 1}`}
-                  onClick={() => {
-                    setCurrentSlideIndex(index);
-                    setIsAutoplay(false);
-                  }}
-                  className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${index === currentSlideIndex ? "bg-pink-400 shadow-[0_0_12px_rgba(244,114,182,0.85)]" : "bg-white/20 hover:bg-white/45"}`}
-                />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+                          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white bg-[#df6e87]/90 text-sm text-white shadow-lg">
+                            ▶
+                          </span>
+                        </div>
+
+                        <span className="absolute left-1 top-1 rounded bg-[#d95f7a] px-1.5 py-0.5 text-[7px] font-bold uppercase text-white">
+                          VIDEO
+                        </span>
+                      </>
+                    )}
+                  </div>
+
+                  <span className="mt-1 block text-[10px] text-[#8d7075]">
+                    {item.type === "video" ? "Video" : "Memory"}
+                  </span>
+                </motion.button>
               ))}
             </div>
           </div>
-        </motion.section>
 
-        <motion.section
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="mt-6 grid grid-cols-3 gap-3 sm:grid-cols-4 sm:gap-4 lg:grid-cols-6"
-        >
-          {items.map((item, index) => (
+          {/* Dots */}
+
+          <div className="mt-2 flex justify-center gap-2">
+            {galleryItems.map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => setCurrentIndex(index)}
+                aria-label={`Go to memory ${index + 1}`}
+                className={`h-2 rounded-full transition-all ${
+                  currentIndex === index
+                    ? "w-6 bg-[#d97988]"
+                    : "w-2 bg-[#d9b6b9]"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* =====================================================
+            BOTTOM CONTROLS
+        ===================================================== */}
+
+        <div className="mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          {currentItem.type === "video" && (
             <button
-              key={`${item.src}-thumbnail-${index}`}
               type="button"
-              onClick={() => {
-                setCurrentSlideIndex(index);
-                setIsAutoplay(false);
-              }}
-              className={`group relative aspect-square overflow-hidden rounded-2xl border transition-all duration-300 ${index === currentSlideIndex ? "scale-[1.03] border-pink-300 ring-2 ring-pink-400/50" : "border-white/10 opacity-70 hover:-translate-y-1 hover:border-pink-300/70 hover:opacity-100"}`}
+              onClick={() => setVideoSound((prev) => !prev)}
+              className="rounded-full border border-[#e3b1b4] bg-white/80 px-5 py-2 text-sm text-[#76545b] shadow-sm backdrop-blur-sm"
             >
-              {item.type === "photo" ? (
-                <img
-                  src={item.src}
-                  alt={`Memory thumbnail ${index + 1}`}
-                  className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
-                  onError={(event) => {
-                    event.currentTarget.src = "/placeholder.jpg";
-                  }}
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-700 to-pink-600 text-2xl text-white">▶</div>
-              )}
+              {videoSound ? "🔊 Sound On" : "🔇 Sound Off"}
             </button>
-          ))}
-        </motion.section>
+          )}
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <button
             type="button"
-            onClick={() => setIsAutoplay((playing) => !playing)}
-            className={`rounded-full border px-6 py-3 text-sm font-semibold transition ${isAutoplay ? "border-pink-300 bg-pink-500 text-white shadow-lg shadow-pink-500/30" : "border-white/15 bg-white/10 text-slate-100 hover:border-pink-300/60 hover:bg-white/15"}`}
+            onClick={openFullscreen}
+            className="rounded-full border border-[#e3b1b4] bg-white/80 px-5 py-2 text-sm text-[#76545b] shadow-sm backdrop-blur-sm"
           >
-            {isAutoplay ? "Pause slideshow" : "Play slideshow"}
-          </button>
-          <button
-            type="button"
-            onClick={onComplete}
-            className="rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 px-7 py-3 font-bold text-white shadow-lg shadow-pink-500/30 transition hover:scale-[1.03] hover:shadow-pink-500/50"
-          >
-            Continue to your wishes →
+            ⛶ Fullscreen
           </button>
         </div>
-      </div>
+
+        {/* Continue */}
+
+        <div className="mt-7 flex justify-center pb-6">
+          <motion.button
+            type="button"
+            onClick={onComplete}
+            whileHover={{
+              scale: 1.04,
+              boxShadow: "0 10px 30px rgba(217,121,136,0.25)",
+            }}
+            whileTap={{ scale: 0.97 }}
+            className="rounded-full bg-gradient-to-r from-[#d97988] to-[#e49a9e] px-8 py-3.5 text-sm font-semibold text-white shadow-lg sm:px-10 sm:text-base"
+          >
+            ♡ Continue to Next Surprise →
+          </motion.button>
+        </div>
+      </section>
+
+      {/* =========================================================
+          FULLSCREEN VIEW
+      ========================================================= */}
 
       <AnimatePresence>
-        {selectedIndex !== null && (
+        {fullscreen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedIndex(null)}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 p-4 backdrop-blur-xl"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+            onClick={() => setFullscreen(false)}
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              onClick={(event) => event.stopPropagation()}
-              className="relative max-h-[90vh] max-w-5xl overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-2xl"
+            <button
+              type="button"
+              onClick={() => setFullscreen(false)}
+              className="absolute right-5 top-5 z-20 rounded-full bg-white/10 px-4 py-2 text-xl text-white backdrop-blur-md"
             >
-              {items[selectedIndex].type === "photo" ? (
-                <img src={items[selectedIndex].src} alt="Full-size memory" className="max-h-[90vh] w-full object-contain" />
+              ✕
+            </button>
+
+            <div
+              className="relative max-h-[92vh] max-w-[95vw]"
+              onClick={(event) => event.stopPropagation()}
+            >
+              {currentItem.type === "photo" ? (
+                <img
+                  src={currentItem.src}
+                  alt="Birthday memory fullscreen"
+                  className="max-h-[88vh] max-w-[92vw] rounded-lg object-contain shadow-2xl"
+                />
               ) : (
                 <video
-                  src={items[selectedIndex].src}
+                  src={currentItem.src}
                   controls
+                  autoPlay
                   playsInline
-                  onLoadedMetadata={(event) => enableVideoAudio(event.currentTarget)}
-                  onPlay={(event) => enableVideoAudio(event.currentTarget)}
-                  className="max-h-[90vh] w-full"
+                  className="max-h-[88vh] max-w-[92vw] rounded-lg shadow-2xl"
                 />
               )}
-              <button
-                type="button"
-                aria-label="Close full-size memory"
-                onClick={() => setSelectedIndex(null)}
-                className="absolute right-4 top-4 rounded-full border border-white/20 bg-slate-950/70 px-3 py-1.5 text-lg text-white backdrop-blur-md transition hover:bg-pink-500"
-              >
-                ×
-              </button>
-            </motion.div>
+
+              <div className="mt-3 text-center font-romantic text-2xl text-white">
+                {captions[currentIndex % captions.length]}
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+
+      {/* =========================================================
+          EXTRA POLAROID / BACKGROUND DETAILS
+      ========================================================= */}
+
+      <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-40 rounded-full bg-pink-100/40 blur-3xl" />
+      <div className="pointer-events-none absolute right-0 top-1/2 h-48 w-48 rounded-full bg-amber-100/40 blur-3xl" />
+
+      <style jsx>{`
+        @media (prefers-reduced-motion: reduce) {
+          * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
+      `}</style>
+    </motion.main>
   );
 }
