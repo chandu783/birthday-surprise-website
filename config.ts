@@ -128,13 +128,13 @@ P.S. You are my greatest adventure and my truest home.`,
   },
 
   // Audio Settings
-  audio: {
+ audio: {
     enabled: true,
     volume: 0.4, // Default 40%
-    backgroundMusicPath: "/audio/background.mp3",
+    backgroundMusicPath: "/audio/JVKE_-_her_.mp3", 
     songs: [
-      { title: "Love Me Like You Do", path: "/audio/love-me-like-you-do.mp3" },
-      { title: "Your Eyes Got My Heart", path: "/audio/your-eyes-got-my-heart.mp3" },
+      { title: "HER ", path: "/audio/JVKE_-_her_.mp3" },
+      { title: "bargad", path: "/audio/Bargad_320.mp3" },
     ],
     loop: true,
   },
