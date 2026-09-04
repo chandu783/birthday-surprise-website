@@ -1,4 +1,3 @@
-```tsx
 "use client";
 
 import { useState } from "react";
@@ -1179,4 +1178,3 @@ function ProposalPage({
     </motion.div>
   );
 }
-```
