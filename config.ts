@@ -81,13 +81,12 @@ export const config = {
   },
 
   // Step 6: Love Letter (Separate Page)
-  letter: {
-    title: "A Letter For You",
-    subject: "My Love, My Life",
-    content: `Dear Naani,
-"
-**Happy Birthday, My Dear Naani 💞**
+letter: {
+  title: "A Letter For You",
+  subject: "My Love, My Life",
+  content: `Dear Naani,
 
+**Happy Birthday, My Dear Naani 💞**
 
 I’m writing this small letter to you 🤌🏻. I don’t know how you’ll feel after reading this, but I really hope you’ll like it. 🥺❤️
 
@@ -121,10 +120,10 @@ Nen already fix ayipoya… **nuvve naa life lo anni.** ❤️ Naaku nuvvu first 
 
 **I promise you…**
 
-I will always care for you. 🤌🏻❤️
-I will always love you. 💞
-I will do everything I can for you. 🤗
-I will stand beside you in your good times and bad times.
+I will always care for you. 🤌🏻❤️  
+I will always love you. 💞  
+I will do everything I can for you. 🤗  
+I will stand beside you in your good times and bad times.  
 And most importantly, I will never stop choosing you. 🥺❤️
 
 Sare na? 🥺
@@ -139,15 +138,15 @@ You are not just my girlfriend.
 
 You are…
 
-**My Everything ❤️**
-**My Luck Charm 🧿**
-**My Bangaram 💞**
-**My Wife 🥺❤️**
-**My Soulmate 💓**
-**My Naani ❤️**
-**My Sneha 💞**
-**My Best Friend 💛**
-**My Infinity ♾️**
+**My Everything ❤️**  
+**My Luck Charm 🧿**  
+**My Bangaram 💞**  
+**My Wife 🥺❤️**  
+**My Soulmate 💓**  
+**My Naani ❤️**  
+**My Sneha 💞**  
+**My Best Friend 💛**  
+**My Infinity ♾️**  
 **My Girl 💞**
 
 Once again, **many more happy returns of the day, my lovely Mardal Pilla and my Luck Charm 🧿💖💞😘**
@@ -157,14 +156,15 @@ I don’t know what the future has written for us, but I know one thing…
 **I want to write that future with you.** ❤️♾️
 
 With all my love,
-**Your Lovely Bava ❤️**
-**Your Well Wisher 🤗**
-**Your Soulmate 💓**
-**Your Best Friend 💛**
-**Your Husband 🥺❤️**
-**Your Boyfriend 💞**",
 
-  },
+**Your Lovely Bava ❤️**  
+**Your Well Wisher 🤗**  
+**Your Soulmate 💓**  
+**Your Best Friend 💛**  
+**Your Husband 🥺❤️**  
+**Your Boyfriend 💞**
+`,
+},
 
   // Step 7: Wishes Display (After User Input)
   wishesDisplay: {
