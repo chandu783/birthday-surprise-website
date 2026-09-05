@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -305,9 +306,9 @@ export default function GalleryStep({ onComplete }: GalleryStepProps) {
           </div>
         </motion.header>
 
-        {/* =====================================================
+        {/* =========================================================
             MAIN COLLAGE
-        ===================================================== */}
+        ========================================================= */}
 
         <div className="relative mx-auto max-w-6xl">
           {/* Left card */}
@@ -377,17 +378,22 @@ export default function GalleryStep({ onComplete }: GalleryStepProps) {
 
                   <div className="absolute -top-3 left-1/2 z-20 h-8 w-28 -translate-x-1/2 rotate-[-2deg] bg-pink-200/75 shadow-sm" />
 
-                  {/* Media */}
+                  {/* =================================================
+                      FIXED MEDIA AREA
+                      
+                      Portrait images are now displayed completely.
+                      No face/body cropping.
+                  ================================================= */}
 
-                  <div className="relative aspect-[4/3] overflow-hidden bg-[#eadfd9]">
+                  <div className="relative flex min-h-[420px] w-full items-center justify-center overflow-hidden bg-[#eadfd9] sm:min-h-[560px]">
                     {currentItem.type === "photo" ? (
                       <motion.img
                         key={currentItem.src}
                         src={currentItem.src}
                         alt="Beautiful birthday memory"
-                        className="h-full w-full object-cover"
-                        initial={{ scale: 1.04 }}
-                        animate={{ scale: 1 }}
+                        className="h-auto max-h-[75vh] w-full object-contain"
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
                         transition={{
                           duration: 1.2,
                           ease: "easeOut",
@@ -401,7 +407,7 @@ export default function GalleryStep({ onComplete }: GalleryStepProps) {
                         playsInline
                         preload="metadata"
                         muted={!videoSound}
-                        className="h-full w-full object-cover"
+                        className="max-h-[75vh] w-full object-contain"
                       />
                     )}
 
@@ -447,9 +453,9 @@ export default function GalleryStep({ onComplete }: GalleryStepProps) {
             </AnimatePresence>
           </div>
 
-          {/* =====================================================
+          {/* =========================================================
               MOBILE NAVIGATION
-          ===================================================== */}
+          ========================================================= */}
 
           <div className="mt-5 flex items-center justify-center gap-4 md:hidden">
             <button
@@ -473,9 +479,9 @@ export default function GalleryStep({ onComplete }: GalleryStepProps) {
             </button>
           </div>
 
-          {/* =====================================================
+          {/* =========================================================
               COMBINED PHOTO + VIDEO THUMBNAILS
-          ===================================================== */}
+          ========================================================= */}
 
           <div className="mt-7 overflow-x-auto pb-3">
             <div className="flex min-w-max justify-center gap-3 px-4">
@@ -500,7 +506,7 @@ export default function GalleryStep({ onComplete }: GalleryStepProps) {
                       <img
                         src={item.src}
                         alt={`Memory ${index + 1}`}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-contain"
                       />
                     ) : (
                       <>
@@ -509,7 +515,7 @@ export default function GalleryStep({ onComplete }: GalleryStepProps) {
                           muted
                           playsInline
                           preload="metadata"
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-contain"
                         />
 
                         <div className="absolute inset-0 flex items-center justify-center bg-black/10">
@@ -552,9 +558,9 @@ export default function GalleryStep({ onComplete }: GalleryStepProps) {
           </div>
         </div>
 
-        {/* =====================================================
+        {/* =========================================================
             BOTTOM CONTROLS
-        ===================================================== */}
+        ========================================================= */}
 
         <div className="mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row">
           {currentItem.type === "video" && (
@@ -616,7 +622,7 @@ export default function GalleryStep({ onComplete }: GalleryStepProps) {
             </button>
 
             <div
-              className="relative max-h-[92vh] max-w-[95vw]"
+              className="relative flex max-h-[92vh] max-w-[95vw] flex-col items-center"
               onClick={(event) => event.stopPropagation()}
             >
               {currentItem.type === "photo" ? (
@@ -631,7 +637,7 @@ export default function GalleryStep({ onComplete }: GalleryStepProps) {
                   controls
                   autoPlay
                   playsInline
-                  className="max-h-[88vh] max-w-[92vw] rounded-lg shadow-2xl"
+                  className="max-h-[88vh] max-w-[92vw] rounded-lg object-contain shadow-2xl"
                 />
               )}
 
@@ -643,9 +649,7 @@ export default function GalleryStep({ onComplete }: GalleryStepProps) {
         )}
       </AnimatePresence>
 
-      {/* =========================================================
-          EXTRA POLAROID / BACKGROUND DETAILS
-      ========================================================= */}
+      {/* EXTRA POLAROID / BACKGROUND DETAILS */}
 
       <div className="pointer-events-none absolute bottom-0 left-0 h-40 w-40 rounded-full bg-pink-100/40 blur-3xl" />
       <div className="pointer-events-none absolute right-0 top-1/2 h-48 w-48 rounded-full bg-amber-100/40 blur-3xl" />
