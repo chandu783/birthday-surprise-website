@@ -36,12 +36,14 @@ export const config = {
   gallery: {
     // Example photos included in /public/memories/. Replace these with personal photos when ready.
     photos: [
-      "/memories/memory-01.png",
+      "/memories/design_4_simple_moments.png",
       "/memories/memory-02.png",
-      "/memories/memory-03.png",
-      "/memories/memory-04.png",
+      "/memories/design_2_sunshine.png",
+      "/memories/design_3_smile.png",
+      "/memories/s24.jpeg",
       "/memories/s2.jpeg",
-      "/memories/s1.HEIC",
+      "/memories/s3.png",
+      "/memories/s2.jpeg",
     ],
     // Add licensed videos to /public/memories/ when available.
     videos: [
