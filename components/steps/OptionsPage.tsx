@@ -72,7 +72,7 @@ export default function OptionsPage({ onComplete }: OptionsPageProps) {
     {
       title: "Video Gallery",
       icon: "🎬",
-      content: `Our ${config.gallery.videos.length} special videos capture the moments we'll cherish forever. From laughter to tears of joy, these memories are the essence of our love story.`,
+      content: `Your ${config.gallery.videos.length} special videos capture the moments we'll cherish forever. From laughter to tears of joy, these memories are the essence of our love story.`,
       gradient: "from-blue-500/20 via-purple-500/10 to-pink-500/20",
       border: "border-blue-400/30",
       glow: "hover:shadow-blue-500/30",
