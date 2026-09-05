@@ -41,7 +41,7 @@ export const config = {
       "/memories/memory-03.png",
       "/memories/memory-04.png",
       "/memories/memory-04.png",
-      "/memories/memory-04.png",
+      "/public/memories/si.HEIC",
     ],
     // Add licensed videos to /public/memories/ when available.
     videos: [
