@@ -38,7 +38,6 @@ export const config = {
     photos: [
       "/memories/s3.png",
       "/memories/design_4_simple_moments.png",
-      "/memoreies/s24.png",
       "/memories/design_2_sunshine.png",
       "/memories/design_3_smile.png",
       "/memories/s24.jpeg",
