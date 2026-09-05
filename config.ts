@@ -36,18 +36,28 @@ export const config = {
   gallery: {
     // Example photos included in /public/memories/. Replace these with personal photos when ready.
     photos: [
+      "/memories/s3.png",
       "/memories/design_4_simple_moments.png",
-      "/memories/memory-02.png",
+      "/memoreies/s24.png",
       "/memories/design_2_sunshine.png",
       "/memories/design_3_smile.png",
       "/memories/s24.jpeg",
       "/memories/s2.jpeg",
-      "/memories/s3.png",
-      "/memories/s2.jpeg",
+      "/memories/s5.jpeg",
+      "/memories/s21.jpeg",
+      "/memories/s18.jpeg",
+      "/memories/s17.jpeg",
+      "/memories/s14.jpeg",
+
+
+
+
+
+      
     ],
     // Add licensed videos to /public/memories/ when available.
     videos: [
-      "/memories/video-01.mp4",
+      "/memories/sneha.mp4",
        "/memories/video-02.mp4",
     ],
     enableSwipe: true, // Manual swipe only, no auto-scroll
