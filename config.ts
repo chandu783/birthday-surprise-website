@@ -185,7 +185,7 @@ With all my love,
 
   // Step 9: Proposal Settings
   proposal: {
-    yesBtnText: "Yes, Forever! 💍",
+    yesBtnText: "Yes, Forever! ",
     noBtnText: "Maybe...",
     noButtonResponses: [
       "Are you sure? 🥺",
