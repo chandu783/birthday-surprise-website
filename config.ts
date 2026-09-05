@@ -85,7 +85,7 @@ export const config = {
     title: "A Letter For You",
     subject: "My Love, My Life",
     content: `Dear Naani,
-
+"
 **Happy Birthday, My Dear Naani 💞**
 
 
@@ -162,7 +162,7 @@ With all my love,
 **Your Soulmate 💓**
 **Your Best Friend 💛**
 **Your Husband 🥺❤️**
-**Your Boyfriend 💞**
+**Your Boyfriend 💞**",
 
   },
 
