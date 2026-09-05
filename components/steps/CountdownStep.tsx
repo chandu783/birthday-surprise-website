@@ -23,6 +23,7 @@ export default function CountdownStep({ onComplete }: CountdownStepProps) {
     minutes: 0,
     seconds: 0,
   });
+
   const [isCountdownComplete, setIsCountdownComplete] = useState(false);
 
   useEffect(() => {
@@ -38,29 +39,40 @@ export default function CountdownStep({ onComplete }: CountdownStepProps) {
           minutes: Math.floor((difference / 1000 / 60) % 60),
           seconds: Math.floor((difference / 1000) % 60),
         });
+
         setIsCountdownComplete(false);
       } else {
-        // Countdown is complete
         setTimeLeft({
           days: 0,
           hours: 0,
           minutes: 0,
           seconds: 0,
         });
+
         setIsCountdownComplete(true);
-        if (onComplete) {
-          onComplete();
-        }
       }
     };
 
     calculateTimeLeft();
+
     const timer = setInterval(calculateTimeLeft, 1000);
 
     return () => clearInterval(timer);
-  }, [onComplete]);
+  }, []);
 
-  const TimeBox = ({ value, label }: { value: number; label: string }) => (
+  const handleScreenTouch = () => {
+    if (isCountdownComplete && onComplete) {
+      onComplete();
+    }
+  };
+
+  const TimeBox = ({
+    value,
+    label,
+  }: {
+    value: number;
+    label: string;
+  }) => (
     <motion.div
       {...fadeInUp}
       className="flex flex-col items-center gap-2 bg-gradient-to-br from-pink-500/20 to-orange-500/20 backdrop-blur-md rounded-2xl p-6 border border-pink-500/30 min-w-24"
@@ -68,6 +80,7 @@ export default function CountdownStep({ onComplete }: CountdownStepProps) {
       <div className="text-3xl md:text-4xl font-bold text-pink-400">
         {String(value).padStart(2, "0")}
       </div>
+
       <div className="text-xs md:text-sm uppercase font-semibold text-gray-300 tracking-wider">
         {label}
       </div>
@@ -77,10 +90,13 @@ export default function CountdownStep({ onComplete }: CountdownStepProps) {
   return (
     <motion.div
       {...fadeInUp}
-      className="min-h-screen flex flex-col items-center justify-center px-4 py-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
+      onClick={handleScreenTouch}
+      onTouchStart={handleScreenTouch}
+      className={`min-h-screen flex flex-col items-center justify-center px-4 py-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 ${
+        isCountdownComplete ? "cursor-pointer" : ""
+      }`}
     >
-      {/* Animated background */}
-      <div className="absolute inset-0 opacity-30">
+      <div className="absolute inset-0 opacity-30 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-pink-600/10 via-transparent to-orange-600/10 animate-pulse" />
       </div>
 
@@ -115,26 +131,46 @@ export default function CountdownStep({ onComplete }: CountdownStepProps) {
           transition={{ delay: 0.6, duration: 0.6 }}
           className="text-lg md:text-xl text-gray-300"
         >
-          {isCountdownComplete ? "It's time! 🎉" : "Get ready for something special! 🎂"}
+          {isCountdownComplete
+            ? "It's time! 🎉"
+            : "Get ready for something special! 🎂"}
         </motion.p>
 
         {isCountdownComplete && (
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.8 }}
-            className="text-base md:text-lg text-pink-400 font-semibold"
+            animate={{
+              opacity: 1,
+              scale: [0.95, 1.02, 0.95],
+            }}
+            transition={{
+              opacity: { duration: 0.5 },
+              scale: {
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              },
+            }}
+            className="space-y-3"
           >
-            Click below to unlock your surprise! 💝
-          </motion.p>
+            <p className="text-base md:text-lg text-pink-400 font-semibold">
+              Your surprise is ready 💝
+            </p>
+
+            <p className="text-sm md:text-base text-gray-400">
+              Touch anywhere to continue
+            </p>
+          </motion.div>
         )}
       </motion.div>
 
-      {/* Scroll hint or completion message */}
       <motion.div
         animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-gray-400 text-sm md:text-base text-center"
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+        }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-gray-400 text-sm md:text-base text-center pointer-events-none"
       >
         {isCountdownComplete ? (
           <motion.p
@@ -142,7 +178,7 @@ export default function CountdownStep({ onComplete }: CountdownStepProps) {
             animate={{ opacity: 1 }}
             className="text-pink-400 font-semibold"
           >
-            Scroll down to continue ↓
+            Touch the screen to continue ↓
           </motion.p>
         ) : (
           <p>Scroll down to continue ↓</p>
