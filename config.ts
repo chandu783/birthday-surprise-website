@@ -47,17 +47,17 @@ export const config = {
       "/memories/s18.jpeg",
       "/memories/s17.jpeg",
       "/memories/s14.jpeg",
-
-
-
-
+      "/memories/s15.jpeg",
+      "/memories/s6.jpeg",
 
       
     ],
     // Add licensed videos to /public/memories/ when available.
     videos: [
       "/memories/sneha.mp4",
-       "/memories/video-02.mp4",
+       "/memories/sneha2.mp4",
+      "/memories/sneha3.mp4",
+      "/memories/sneha1.mp4",
     ],
     enableSwipe: true, // Manual swipe only, no auto-scroll
     manualNavigationOnly: true,
@@ -86,18 +86,84 @@ export const config = {
     subject: "My Love, My Life",
     content: `Dear Naani,
 
-I still remember the moment I first saw you – time seemed to stand still. Your presence has filled my life with colors I never knew existed, and every day with you feels like a blessing I never deserve.
+**Happy Birthday, My Dear Naani 💞**
 
-You are not just my love, but my best friend, my confidant, and my home. The way you laugh, the way you care, the way you love – everything about you makes me want to be a better person.
 
-On this special day, I want you to know that every moment spent with you is a gift I cherish with all my heart. Your smile lights up my darkest days, and your love keeps me going.
+I’m writing this small letter to you 🤌🏻. I don’t know how you’ll feel after reading this, but I really hope you’ll like it. 🥺❤️
 
-I promise to love you endlessly, to support your dreams, and to make every birthday of yours as special as you make every day of my life.
+Idi naa first relationship, and naa life lo nuvvu dorkadam really naa luck anipisthundi. 🧿 Endhukante, you understand my feelings, my emotions, my problems, and even the things I don’t say sometimes. And nee caring aina, nee love aina… naaku life long kavali. 🥺💞
 
-Forever and always yours,
-With all my love 💕
+Nee alagadam 🤌🏻, nee kopam, nee lolli… anni naaku life long kavali. Ishtaava? 🥺❤️
 
-P.S. You are my greatest adventure and my truest home.`,
+Mana relationship lo idi nee first birthday 🎂, and I’m so excited 🥰 because ee sari nee birthday ni nitho kalisi celebrate cheyyabothunna. Aa thought itself makes me so happy. ❤️
+
+Mana long-distance relationship koncham kastam ga undhi 😭🥲. Konni times edupu kuda osthundi, because ninnu miss avuthunna. But no matter how difficult it gets, nen nikosam ostha. Nitho unta. Life long nithone undali anukuntunna. 🤗❤️
+
+Mana madhya lolli aina, problems aina, misunderstandings aina… idharam kalisi solve chesukovali. Kani eppudu break avvakudadhu. 🥺 Em problem vachina, idharam kalisi undali. Nenu eppudu mana relationship ni give up cheyyanu. ❤️
+
+Future lo nikosam ostha, mee parents tho matladatha, request chestha… and ninnu chala baaga chusukunta. Nuvvu ishtapade **princess treatment** 👑🥰 kuda istha.
+
+Naaku okate korika—**nee health eppudu baagundali.** ❤️
+
+Future lo nuvvu ekkuva pani cheyyakunda happy ga undali ani naa wish. Cooking, cleaning, washing… everything nen chesukunta. Nuvvu just happy ga undu. 🥺🤗
+
+Ee little surprise kuda neeku nachuthundi ani anukuntunna. ❤️
+
+Nen nee first love kakapoyina 😔, nee **best love** avvali ani korukuntunna. And nee **last love** kuda avvali. 🥺💞 Nenu always try chestha to give you the best love I can.
+
+Nuvvu naaku ichina love entha beautiful ga untundo naaku mundu teliyadu. Asalu love anedi intha beautiful ga untadha ani kuda naaku teliyadu. But after you came into my life, I understood it. 🥰❤️
+
+And one thing… nen ninnu ippudu vadilesi undalenu. 🥺 **I can’t imagine my life without you.** Nuvvu eppudu naatho untav kada? ❤️
+
+Future lo nee every birthday idharam kalisi celebrate cheskovali, together ga enjoy cheyyali, and every year inka beautiful memories create cheskovali. 🎂🥰
+
+Nen already fix ayipoya… **nuvve naa life lo anni.** ❤️ Naaku nuvvu first love kavali, last love kavali, forever love kavali. ♾️💞
+
+**I promise you…**
+
+I will always care for you. 🤌🏻❤️
+I will always love you. 💞
+I will do everything I can for you. 🤗
+I will stand beside you in your good times and bad times.
+And most importantly, I will never stop choosing you. 🥺❤️
+
+Sare na? 🥺
+
+Nuvvu naakosam wait chesthunav kada… 🥺 Please koncham inka wait cheyyi. Future lo nen nithone unta. 🤗❤️
+
+Nuvvu future lo inka happy ga undali. Nee face lo aa smile eppudu undali. 🥰 Nuvvu em korukunna, em dream chesina, nenu nee pakkana undi support cheyyali ani korukuntunna.
+
+**I promise you, I will live with you forever. ♾️❤️**
+
+You are not just my girlfriend.
+
+You are…
+
+**My Everything ❤️**
+**My Luck Charm 🧿**
+**My Bangaram 💞**
+**My Wife 🥺❤️**
+**My Soulmate 💓**
+**My Naani ❤️**
+**My Sneha 💞**
+**My Best Friend 💛**
+**My Infinity ♾️**
+**My Girl 💞**
+
+Once again, **many more happy returns of the day, my lovely Mardal Pilla and my Luck Charm 🧿💖💞😘**
+
+I don’t know what the future has written for us, but I know one thing…
+
+**I want to write that future with you.** ❤️♾️
+
+With all my love,
+**Your Lovely Bava ❤️**
+**Your Well Wisher 🤗**
+**Your Soulmate 💓**
+**Your Best Friend 💛**
+**Your Husband 🥺❤️**
+**Your Boyfriend 💞**
+
   },
 
   // Step 7: Wishes Display (After User Input)
