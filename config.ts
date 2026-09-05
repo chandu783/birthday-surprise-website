@@ -40,8 +40,8 @@ export const config = {
       "/memories/memory-02.png",
       "/memories/memory-03.png",
       "/memories/memory-04.png",
-      "/public/memories/s2.jpeg",
-      "/public/memories/si.jpg",
+      "/memories/s2.jpeg",
+      "/memories/si.jpg",
     ],
     // Add licensed videos to /public/memories/ when available.
     videos: [
