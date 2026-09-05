@@ -9,7 +9,7 @@ export const config = {
   // Important Dates (YYYY-MM-DD format)
   dates: {
     birthday: "2026-09-16", // Her birthday
-    meetingDate: "2024-07-15", // When you met
+    meetingDate: "2026-09-16", // When you met
   },
 
   // Step 1: Countdown Settings
